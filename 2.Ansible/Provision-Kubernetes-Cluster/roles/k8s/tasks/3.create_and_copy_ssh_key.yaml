@@ -1,0 +1,20 @@
+---
+# Generate key and copy
+- name: Generate SSH key on master
+  ansible.builtin.openssh_keypair:
+    path: /root/.ssh/id_rsa  # Set the path where you want to generate the key
+  when: inventory_hostname == "k8s-master"
+
+- name: Ensure the .ssh directory exists on the worker
+  ansible.builtin.file:
+    path: /root/.ssh
+    state: directory
+  when: inventory_hostname in groups['worker']
+
+- name: Copy SSH key to worker
+  ansible.builtin.copy:
+    src: /root/.ssh/id_rsa.pub  # Path to the generated public key on the master
+    dest: /root/.ssh/authorized_keys  # Destination on the worker
+  when: inventory_hostname in groups['worker']
+
+...

@@ -1,0 +1,41 @@
+---
+# Create the Kubernetes repository file with the specified content
+- name: Create Kubernetes repository file
+  become: yes
+  copy:
+    content: |
+      [kubernetes]
+      name=Kubernetes
+      baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      exclude=kubelet,kubeadm,kubectl
+    dest: /etc/yum.repos.d/kubernetes.repo
+    mode: '0644'
+
+- name: Install Kubernetes packages
+  become: yes
+  package:
+    name:
+      - kubelet-{{ KUBECOMPNENTS_VERSION }}
+      - kubeadm-{{ KUBECOMPNENTS_VERSION }}
+      - kubectl-{{ KUBECOMPNENTS_VERSION }}
+    state: present
+    disable_excludes: kubernetes
+
+- name: Enable Kubelet service
+  become: yes
+  service:
+    name: kubelet
+    enabled: yes
+
+- name: Start Kubelet service
+  become: yes
+  service:
+    name: kubelet
+    state: started
+
+...
+

@@ -1,0 +1,21 @@
+---
+
+# Task to disable the swap memory
+- name: Turn off swap
+  command: swapoff -a
+  ignore_errors: yes
+
+- name: Comment out swap entry in /etc/fstab using regex
+  replace:
+    path: /etc/fstab
+    regexp: '^(.* swap .*)$'
+    replace: '#\1'
+
+# Task to set SELinux to permissive mode
+- name: Set SELinux to permissive mode
+  lineinfile:
+    path: /etc/selinux/config  
+    regexp: '^SELINUX=enforcing$'  
+    line: 'SELINUX=permissive'  
+
+...

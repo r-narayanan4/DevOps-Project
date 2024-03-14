@@ -1,0 +1,48 @@
+---
+
+# Initialize cluster
+- name: Copy kubeadm-config.yaml
+  template:
+    src: templates/kubeadm-config.j2
+    dest: "{{ home_path }}/kubeadm-config.yaml"
+
+- name: Run kubeadm init
+  command: kubeadm init --config {{ home_path }}/kubeadm-config.yaml
+  register: init_output
+  ignore_errors: yes  # Ignore errors on the initial attempt
+  changed_when: "'kubeadm join' in init_output.stdout"
+  failed_when: false  # Always mark this task as successful, even if the command fails
+
+- name: Retry kubeadm init with --ignore-preflight-errors if it failed
+  command: kubeadm init --config {{ home_path }}/kubeadm-config.yaml --ignore-preflight-errors all
+  when: init_output.rc != 0  # Only run if the initial kubeadm init command failed
+  register: init_output_retry
+  changed_when: "'kubeadm join' in init_output_retry.stdout"
+
+- name: Create Kubernetes config directory
+  become: yes
+  file:
+    path: "{{ home_path }}/.kube"
+    state: directory
+
+- name: Copy Kubernetes admin config to user directory
+  become: yes
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ home_path }}/.kube/config"
+    mode: '0600'
+
+- name: Set ownership of Kubernetes config file
+  become: yes
+  file:
+    path: "{{ ansible_user_dir }}/.kube/config"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0600'
+
+- name: Print kubeadm join command
+  debug:
+    msg: "{{ (init_output_retry.stdout_lines | default(init_output.stdout_lines))[-1] }}"
+  when: "'kubeadm join' in (init_output_retry.stdout | default(init_output.stdout))"
+
+...

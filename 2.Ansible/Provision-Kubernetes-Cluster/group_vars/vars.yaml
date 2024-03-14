@@ -1,0 +1,28 @@
+---
+# Variables for k8s cluster
+
+# Define the master node based on the [master] group in your host file
+master_ip: "{{ hostvars[groups['master'][0]].ansible_host }}"
+master_hostname: "{{ hostvars[groups['master'][0]].inventory_hostname }}"
+
+# Define the worker nodes based on the [worker] group in your host file
+worker_ip: "{{ hostvars[groups['worker'][0]].ansible_host }}"
+worker_hostname: "{{ hostvars[groups['worker'][0]].inventory_hostname }}"
+
+# worker2_ip: "{{ hostvars[groups['worker'][1]].ansible_host }}"
+# worker2_hostname: "{{ hostvars[groups['worker'][1]].inventory_hostname }}"
+
+# Containerd version
+CONTAINERD_VERSION: 1.6.20
+
+# Runc version
+RUNC_VERSION: 1.1.7
+
+# Kubernetes version
+KUBECOMPNENTS_VERSION: 1.25.4
+
+# Kubernetes user and dir
+home_path: /root
+user: root
+
+...

@@ -1,0 +1,72 @@
+---
+
+# Install containerd
+- name: Download Containerd
+  get_url:
+    url: "https://github.com/containerd/containerd/releases/download/v{{ CONTAINERD_VERSION }}/containerd-{{ CONTAINERD_VERSION }}-linux-amd64.tar.gz"
+    dest: "/tmp/containerd-{{ CONTAINERD_VERSION }}-linux-amd64.tar.gz"
+  register: download_result
+
+- name: Extract Containerd
+  unarchive:
+    src: "/tmp/containerd-{{ CONTAINERD_VERSION }}-linux-amd64.tar.gz"
+    dest: "/usr/local/"
+    remote_src: yes
+  when: download_result.changed
+
+- name: Copy containerd.service
+  copy:
+    src: files/containerd.service
+    dest: /lib/systemd/system/containerd.service
+  notify: Reload systemd, Enable and start containerd
+
+
+# Install runc.
+- name: Download runc
+  get_url:
+    url: "https://github.com/opencontainers/runc/releases/download/v{{ RUNC_VERSION }}/runc.amd64"
+    dest: "/tmp/runc.amd64"
+  register: download_result
+
+- name: Install runc
+  copy:
+    src: "/tmp/runc.amd64"
+    dest: "/usr/local/sbin/runc"
+    mode: '0755'
+  when: download_result.changed
+
+# Configure Containerd
+
+- name: Ensure /etc/containerd directory exists
+  file:
+    path: /etc/containerd
+    state: directory
+    owner: root  
+    group: root
+    mode: '0755'
+
+
+- name: Run 'containerd config default' and save to config.toml
+  command: containerd config default
+  register: containerd_config
+  changed_when: false
+  ignore_errors: yes
+
+- name: Save Containerd default configuration to /etc/containerd/config.toml
+  copy:
+    content: "{{ containerd_config.stdout_lines | join('\n') }}"
+    dest: /etc/containerd/config.toml
+
+- name: Enable Systemd Control Group on Containerd
+  replace:
+    path: /etc/containerd/config.toml
+    regexp: 'SystemdCgroup =.*'
+    replace: 'SystemdCgroup = true'
+  
+- name: Restart Containerd service
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes
+
+...

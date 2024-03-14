@@ -1,0 +1,23 @@
+---
+# Joine the worker nodes
+- name: Get kubeadm join command
+  command: kubeadm token create --print-join-command
+  when: inventory_hostname in groups['master'][0]
+  register: join_command_result
+  changed_when: false  # Avoid marking the task as changed
+
+- name: Set join command as a fact for master nodes
+  set_fact:
+    join_command: "{{ join_command_result.stdout }}"
+  when: inventory_hostname in groups['master']
+
+- name: Set join command as a fact for all hosts
+  set_fact:
+    join_command: "{{ hostvars[groups['master'][0]].join_command }}"
+  run_once: true  # Ensure it's executed only once
+
+- name: Execute kubeadm join command
+  command: "{{ join_command }}"
+  when: inventory_hostname in groups['worker']
+
+...

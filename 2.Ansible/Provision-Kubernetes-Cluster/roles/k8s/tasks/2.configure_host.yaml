@@ -1,0 +1,15 @@
+---
+
+# Task to update /etc/hosts file in all machines
+- name: update /etc/hosts file
+  copy:
+    content: |
+      127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+      ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+      {{ master_ip }} master {{ master_hostname }} 
+      {{ worker_ip }} worker {{ worker_hostname }} 
+#      {{ worker2_ip }} worker2 {{ worker2_hostname }} 
+    dest: /etc/hosts
+  when: inventory_hostname in groups['all']
+  
+...

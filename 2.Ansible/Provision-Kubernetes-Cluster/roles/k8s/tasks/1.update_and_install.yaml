@@ -1,0 +1,27 @@
+---
+# Task to update
+- name: Update all packages using yum
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install a list of packages
+  yum:
+    name:
+      - wget
+      - curl
+    state: present
+
+# Disable firewall for practice pupose only(not recommended for producation)
+- name: Stop firewalld service
+  systemd:
+    name: firewalld
+    state: stopped
+  ignore_errors: yes   # Ignore errors if firewalld is already stopped 
+
+- name: Disable firewalld service at boot
+  systemd:
+    name: firewalld
+    enabled: no
+
+...

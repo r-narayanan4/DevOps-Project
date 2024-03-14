@@ -1,0 +1,18 @@
+---
+
+# Handlers for all files
+
+# Handlers for Task-6
+- name: Reload systemd
+  systemd:
+    state: reloaded
+  become: yes
+
+- name: Enable and start containerd
+  systemd:
+    name: containerd
+    enabled: yes
+    state: started
+  become: yes
+  
+...

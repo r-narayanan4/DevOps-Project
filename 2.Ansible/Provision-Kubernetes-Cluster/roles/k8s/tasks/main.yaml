@@ -1,0 +1,36 @@
+---
+
+# ALL TASKS
+- name: Step 1 - Update and Install
+  include_tasks: 1.update_and_install.yaml
+
+- name: Step 2 - Configure Host
+  include_tasks: 2.configure_host.yaml
+
+- name: Step 3 - Create and Copy SSH Key
+  include_tasks: 3.create_and_copy_ssh_key.yaml
+
+- name: Step 4 - Disable Swap and Set SELinux Permissive
+  include_tasks: 4.disable_swap_and_set_selinux_permissive.yaml
+
+- name: Step 5 - Enable Required Kernel Modules
+  include_tasks: 5.enable_kernal_modules.yaml
+
+- name: Step 6 - Install Containerd and Runc
+  include_tasks: 6.install_containerd_and_runc.yaml
+
+- name: Step 7 - Install Kubernetes Packages
+  include_tasks: 7.install_k8s_packages.yaml
+
+- name: Step 8 - Initialize Kubernetes Master
+  when: inventory_hostname in groups['master']
+  include_tasks: 8.initialize_kubernetes_master.yaml
+
+- name: Step 9 - Install CNI and k9s
+  when: inventory_hostname in groups['master']
+  include_tasks: 9.install_cni_and_k9s.yaml
+
+- name: Step 10 - Join Nodes
+  include_tasks: 10.join_nodes.yaml
+
+...

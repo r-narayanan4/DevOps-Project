@@ -1,0 +1,12 @@
+[master]
+k8s-master ansible_host=192.168.29.110
+
+[worker]
+k8s-worker ansible_host=192.168.29.111
+#k8s-worker-2 ansible_host=192.168.29.112
+
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=root
+ansible_ssh_pass=rvl4
