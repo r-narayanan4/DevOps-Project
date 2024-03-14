@@ -1,0 +1,6 @@
+#  Namespace definition for Ruby on Rails application
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ruby-rails
+
