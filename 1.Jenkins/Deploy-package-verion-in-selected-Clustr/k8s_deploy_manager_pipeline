@@ -1,0 +1,143 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(
+            name: 'pipeline_choice',
+            choices: ['New-Installation', 'Teardown-Installation', 'Upgradation'],
+            description: 'Select the pipeline to execute'
+        )
+
+        choice(
+            name: 'tarfile_version',
+            choices: ['1.5.11', '1.7.6.5', '1.7.6.6'],
+            description: 'Select the version of the tarfile to use'
+        )
+
+        booleanParam(name: 'DEPLOY_TO_CLUSTER_1', defaultValue: false, description: 'Deploy to Kubernetes cluster 1')
+        booleanParam(name: 'DEPLOY_TO_CLUSTER_2', defaultValue: false, description: 'Deploy to Kubernetes cluster 2')
+        booleanParam(name: 'DEPLOY_TO_CLUSTER_3', defaultValue: false, description: 'Deploy to Kubernetes cluster 3')
+        booleanParam(name: 'DEPLOY_TO_CLUSTER_4', defaultValue: false, description: 'Deploy to Kubernetes cluster 4')
+        booleanParam(name: 'DEPLOY_TO_CLUSTER_5', defaultValue: false, description: 'Deploy to Kubernetes cluster 5')
+        booleanParam(name: 'DEPLOY_TO_CLUSTER_6', defaultValue: false, description: 'Deploy to Kubernetes cluster 6')
+        booleanParam(name: 'DEPLOY_TO_CLUSTER_7', defaultValue: false, description: 'Deploy to Kubernetes cluster 7')
+
+        credentials(
+            name: 'SSH_CREDENTIALS',
+            description: 'SSH credentials for connecting to the remote server',
+            required: true,
+            defaultValue: '',
+        )
+    }
+
+    stages {
+        stage('Execute Selected Pipeline') {
+            steps {
+                script {
+                    def selectedPipeline = params.pipeline_choice
+                    echo "Selected Pipeline: ${selectedPipeline}"
+                    echo "Tarball Version: ${params.tarfile_version}"
+                    echo "Deploy to Cluster 1: ${params.DEPLOY_TO_CLUSTER_1}"
+                    echo "Deploy to Cluster 2: ${params.DEPLOY_TO_CLUSTER_2}"
+                    echo "Deploy to Cluster 3: ${params.DEPLOY_TO_CLUSTER_3}"
+                    echo "Deploy to Cluster 4: ${params.DEPLOY_TO_CLUSTER_4}"
+                    echo "Deploy to Cluster 5: ${params.DEPLOY_TO_CLUSTER_5}"
+                    echo "Deploy to Cluster 6: ${params.DEPLOY_TO_CLUSTER_6}"
+                    echo "Deploy to Cluster 7: ${params.DEPLOY_TO_CLUSTER_7}"
+
+                    if (selectedPipeline == 'New-Installation') {
+                        if (params.DEPLOY_TO_CLUSTER_1 || params.DEPLOY_TO_CLUSTER_2 || params.DEPLOY_TO_CLUSTER_3 || params.DEPLOY_TO_CLUSTER_4 || params.DEPLOY_TO_CLUSTER_5 || params.DEPLOY_TO_CLUSTER_6 || params.DEPLOY_TO_CLUSTER_7) {
+                            def IP_1 = "${params.DEPLOY_TO_CLUSTER_1 ? '192.168.9.110' : ''}"
+                            def IP_2 = "${params.DEPLOY_TO_CLUSTER_2 ? '192.168.9.120' : ''}"
+                            def IP_3 = "${params.DEPLOY_TO_CLUSTER_3 ? '192.168.9.130' : ''}"
+                            def IP_4 = "${params.DEPLOY_TO_CLUSTER_4 ? '192.168.9.140' : ''}"
+                            def IP_5 = "${params.DEPLOY_TO_CLUSTER_5 ? '192.168.9.150' : ''}"
+                            def IP_6 = "${params.DEPLOY_TO_CLUSTER_6 ? '192.168.9.160' : ''}"
+                            def IP_7 = "${params.DEPLOY_TO_CLUSTER_7 ? '192.168.9.170' : ''}"
+                            build job: 'New-Installation', propagate: true, parameters: [
+                                string(name: 'IP', value: IP_1),
+                                string(name: 'IP', value: IP_2),
+                                string(name: 'IP', value: IP_3),
+                                string(name: 'IP', value: IP_4),
+                                string(name: 'IP', value: IP_5),
+                                string(name: 'IP', value: IP_6),
+                                string(name: 'IP', value: IP_7),
+                                string(name: 'tarfile_version', value: params.tarfile_version),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_1', value: params.DEPLOY_TO_CLUSTER_1),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_2', value: params.DEPLOY_TO_CLUSTER_2),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_3', value: params.DEPLOY_TO_CLUSTER_3),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_4', value: params.DEPLOY_TO_CLUSTER_4),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_5', value: params.DEPLOY_TO_CLUSTER_5),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_6', value: params.DEPLOY_TO_CLUSTER_6),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_7', value: params.DEPLOY_TO_CLUSTER_7),
+                                credentials(name: 'SSH_CREDENTIALS', value: params.SSH_CREDENTIALS)
+                            ]
+                        }
+                    }
+
+
+                    if (selectedPipeline == 'Teardown-Installation') {
+                        if (params.DEPLOY_TO_CLUSTER_1 || params.DEPLOY_TO_CLUSTER_2 || params.DEPLOY_TO_CLUSTER_3 || params.DEPLOY_TO_CLUSTER_4 || params.DEPLOY_TO_CLUSTER_5 || params.DEPLOY_TO_CLUSTER_6 || params.DEPLOY_TO_CLUSTER_7) {
+                            def IP_1 = "${params.DEPLOY_TO_CLUSTER_1 ? '192.168.9.110' : ''}"
+                            def IP_2 = "${params.DEPLOY_TO_CLUSTER_2 ? '192.168.9.120' : ''}"
+                            def IP_3 = "${params.DEPLOY_TO_CLUSTER_3 ? '192.168.9.130' : ''}"
+                            def IP_4 = "${params.DEPLOY_TO_CLUSTER_4 ? '192.168.9.140' : ''}"
+                            def IP_5 = "${params.DEPLOY_TO_CLUSTER_5 ? '192.168.9.150' : ''}"
+                            def IP_6 = "${params.DEPLOY_TO_CLUSTER_6 ? '192.168.9.160' : ''}"
+                            def IP_7 = "${params.DEPLOY_TO_CLUSTER_7 ? '192.168.9.170' : ''}"
+                            build job: 'Teardown-Installation', propagate: true, parameters: [
+                                string(name: 'IP', value: IP_1),
+                                string(name: 'IP', value: IP_2),
+                                string(name: 'IP', value: IP_3),
+                                string(name: 'IP', value: IP_4),
+                                string(name: 'IP', value: IP_5),
+                                string(name: 'IP', value: IP_6),
+                                string(name: 'IP', value: IP_7),
+                                string(name: 'tarfile_version', value: params.tarfile_version),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_1', value: params.DEPLOY_TO_CLUSTER_1),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_2', value: params.DEPLOY_TO_CLUSTER_2),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_3', value: params.DEPLOY_TO_CLUSTER_3),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_4', value: params.DEPLOY_TO_CLUSTER_4),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_5', value: params.DEPLOY_TO_CLUSTER_5),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_6', value: params.DEPLOY_TO_CLUSTER_6),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_7', value: params.DEPLOY_TO_CLUSTER_7),
+                                credentials(name: 'SSH_CREDENTIALS', value: params.SSH_CREDENTIALS)
+                            ]
+                        }
+                    }
+
+                    if (selectedPipeline == 'Upgradation') {
+                        if (params.DEPLOY_TO_CLUSTER_1 || params.DEPLOY_TO_CLUSTER_2 || params.DEPLOY_TO_CLUSTER_3 || params.DEPLOY_TO_CLUSTER_4 || params.DEPLOY_TO_CLUSTER_5 || params.DEPLOY_TO_CLUSTER_6 || params.DEPLOY_TO_CLUSTER_7) {
+                            def IP_1 = "${params.DEPLOY_TO_CLUSTER_1 ? '192.168.9.110' : ''}"
+                            def IP_2 = "${params.DEPLOY_TO_CLUSTER_2 ? '192.168.9.120' : ''}"
+                            def IP_3 = "${params.DEPLOY_TO_CLUSTER_3 ? '192.168.9.130' : ''}"
+                            def IP_4 = "${params.DEPLOY_TO_CLUSTER_4 ? '192.168.9.140' : ''}"
+                            def IP_5 = "${params.DEPLOY_TO_CLUSTER_5 ? '192.168.9.150' : ''}"
+                            def IP_6 = "${params.DEPLOY_TO_CLUSTER_6 ? '192.168.9.160' : ''}"
+                            def IP_7 = "${params.DEPLOY_TO_CLUSTER_7 ? '192.168.9.170' : ''}"
+                            build job: 'Upgradation', propagate: true, parameters: [
+                                string(name: 'IP', value: IP_1),
+                                string(name: 'IP', value: IP_2),
+                                string(name: 'IP', value: IP_3),
+                                string(name: 'IP', value: IP_4),
+                                string(name: 'IP', value: IP_5),
+                                string(name: 'IP', value: IP_6),
+                                string(name: 'IP', value: IP_7),
+                                string(name: 'tarfile_version', value: params.tarfile_version),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_1', value: params.DEPLOY_TO_CLUSTER_1),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_2', value: params.DEPLOY_TO_CLUSTER_2),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_3', value: params.DEPLOY_TO_CLUSTER_3),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_4', value: params.DEPLOY_TO_CLUSTER_4),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_5', value: params.DEPLOY_TO_CLUSTER_5),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_6', value: params.DEPLOY_TO_CLUSTER_6),
+                                booleanParam(name: 'DEPLOY_TO_CLUSTER_7', value: params.DEPLOY_TO_CLUSTER_7),
+                                credentials(name: 'SSH_CREDENTIALS', value: params.SSH_CREDENTIALS)
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
